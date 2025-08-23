@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/YOUR_USERNAME/eks-project.git
+    repoURL: https://github.com/AbuCloud1/EKS-GameApp-Project.git
     targetRevision: HEAD
     path: manifests
   destination:
