@@ -55,10 +55,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - 2048.easyumrahs.com
+    - eks.easyumrahs.com
     secretName: 2048-game-tls
   rules:
-  - host: 2048.easyumrahs.com
+  - host: eks.easyumrahs.com
     http:
       paths:
       - path: /
