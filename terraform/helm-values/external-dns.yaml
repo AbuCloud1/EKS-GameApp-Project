@@ -1,0 +1,42 @@
+provider: aws
+policy: upsert-only
+aws:
+  zoneType: public
+  evaluateTargetHealth: true
+  assumeRole: ""
+  batchChangeSize: 1000
+  batchChangeInterval: 1s
+  apiRetries: 3
+  preferCNAME: false
+  zoneCacheDuration: 0s
+  sdServiceCleanup: false
+
+sources:
+  - ingress
+
+domainFilters:
+  - eks.easyumrahs.com
+  - prometheus.eks.easyumrahs.com
+  - grafana.eks.easyumrahs.com
+
+registry: txt
+txtOwnerId: eks-cluster
+interval: 1m
+logLevel: info
+
+rbac:
+  create: true
+  serviceAccount:
+    create: true
+    name: external-dns
+    annotations: {}
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi
+
+replicaCount: 1

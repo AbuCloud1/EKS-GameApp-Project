@@ -11,4 +11,6 @@ kubeconfig
 charts/*.tgz
 .env
 .env.local
-project-overview.md
+aws-credentials.env
+.project-overview.md
+.scripts/cost-optimization.sh 
