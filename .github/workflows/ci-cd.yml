@@ -1,0 +1,107 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+env:
+  AWS_REGION: eu-west-1
+  ECR_REPOSITORY: eks-project-app
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    name: Build and Push Docker Image
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+        
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+      
+    - name: Build Docker image
+      run: |
+        docker build -t ${{ env.ECR_REPOSITORY }}:${{ github.sha }} ./app
+        docker tag ${{ env.ECR_REPOSITORY }}:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+        docker tag ${{ env.ECR_REPOSITORY }}:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+        
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        exit-code: '0'
+        
+    - name: Upload Trivy results
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: trivy-results.sarif
+      continue-on-error: true
+        
+    - name: Push image to Amazon ECR
+      run: |
+        docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+        docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+        
+    - name: Output image URI
+      run: |
+        echo "Image pushed to: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}"
+
+  deploy-to-eks:
+    runs-on: ubuntu-latest
+    name: Deploy to EKS
+    needs: build-and-push
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+        
+    - name: Update kube config
+      run: aws eks update-kubeconfig --name eks-cluster --region ${{ env.AWS_REGION }}
+      
+    - name: Install Checkov
+      run: |
+        pip install checkov
+        
+    - name: Run Checkov security scan
+      run: |
+        echo "Running Checkov security scan on Terraform files..."
+        checkov -d ./terraform --output sarif --output-file checkov-results.sarif || true
+        echo "Checkov scan completed (non-blocking)"
+        
+    - name: Upload Checkov results
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: checkov-results.sarif
+      continue-on-error: true
+        
+    - name: Deploy to EKS
+      run: |
+        echo "Deploying application to EKS cluster..."
+        kubectl apply -f manifests/
+        echo "Deployment completed successfully!"
+        
+    - name: Verify deployment
+      run: |
+        echo "Verifying deployment status..."
+        kubectl get pods --all-namespaces
+        kubectl get services --all-namespaces
