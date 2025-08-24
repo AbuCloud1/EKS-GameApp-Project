@@ -9,7 +9,7 @@ metadata:
   name: 2048-game
   namespace: 2048-game
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: 2048-game
@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: 2048-game
-        image: 847025106966.dkr.ecr.eu-west-1.amazonaws.com/2048-game:latest
+        image: 106801461504.dkr.ecr.eu-west-1.amazonaws.com/2048-game:latest
         ports:
         - containerPort: 80
         resources:
@@ -51,7 +51,9 @@ metadata:
   namespace: 2048-game
   annotations:
     kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: letsencrypt-staging
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   tls:
   - hosts:
