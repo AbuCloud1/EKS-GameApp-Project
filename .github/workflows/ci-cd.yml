@@ -35,6 +35,12 @@ jobs:
         echo "Testing AWS credentials..."
         aws sts get-caller-identity
         
+    - name: Ensure ECR repository exists
+      run: |
+        echo "Checking if ECR repository exists..."
+        aws ecr describe-repositories --repository-names ${{ env.ECR_REPOSITORY }} --region ${{ env.AWS_REGION }} || \
+        aws ecr create-repository --repository-name ${{ env.ECR_REPOSITORY }} --region ${{ env.AWS_REGION }}
+        
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
@@ -54,8 +60,10 @@ jobs:
         
     - name: Push image to Amazon ECR
       run: |
+        echo "Pushing Docker image to ECR..."
         docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
         docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+        echo "Docker images pushed successfully!"
         
     - name: Output image URI
       run: |
