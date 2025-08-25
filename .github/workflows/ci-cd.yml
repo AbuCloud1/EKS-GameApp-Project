@@ -1,6 +1,6 @@
 name: EKS CI/CD Pipeline with Security Scanning
 
-# Single workflow file - no duplicates
+# Single workflow file - no duplicates - ECR deployment only
 on:
   push:
     branches: [ main, master ]
