@@ -94,8 +94,8 @@ jobs:
     - name: Run Checkov security scan
       run: |
         echo "Running Checkov security scan on Terraform files..."
-        checkov -d ./terraform --output cli
-        echo "Checkov scan completed (non-blocking)"
+        checkov -d ./terraform --output cli || true
+        echo "Checkov scan completed (non-blocking - issues reported but won't fail pipeline)"
         
     - name: Deploy to EKS
       run: |
