@@ -1,5 +1,6 @@
 name: EKS CI/CD Pipeline with Security Scanning
 
+# Single workflow file - no duplicates
 on:
   push:
     branches: [ main, master ]
