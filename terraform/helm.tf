@@ -1,4 +1,3 @@
-# Commented out until EKS cluster is created and accessible
 resource "helm_release" "nginx_ingress" {
   name       = "nginx-ingress"
   repository = "https://kubernetes.github.io/ingress-nginx"

@@ -1,6 +1,4 @@
 name: EKS CI/CD Pipeline with Security Scanning
-
-# Single workflow file - no duplicates - ECR deployment only
 on:
   push:
     branches: [ main, master ]
@@ -100,8 +98,6 @@ jobs:
     - name: Deploy to EKS via ArgoCD
       run: |
         echo "Deploying application to EKS cluster via ArgoCD..."
-        # Since ArgoCD is already managing deployments, we just need to sync
-        # The manifests are already in the ArgoCD application
         echo "ArgoCD is managing deployments - no manual kubectl apply needed"
         echo "Deployment completed successfully!"
         
