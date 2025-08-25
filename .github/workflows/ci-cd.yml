@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: EKS CI/CD Pipeline with Security Scanning
 
 on:
   push:
@@ -48,15 +48,8 @@ jobs:
       uses: aquasecurity/trivy-action@master
       with:
         image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
-        format: 'sarif'
-        output: 'trivy-results.sarif'
+        format: 'table'
         exit-code: '0'
-        
-    - name: Upload Trivy results
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: trivy-results.sarif
-      continue-on-error: true
         
     - name: Push image to Amazon ECR
       run: |
@@ -92,14 +85,8 @@ jobs:
     - name: Run Checkov security scan
       run: |
         echo "Running Checkov security scan on Terraform files..."
-        checkov -d ./terraform --output sarif --output-file checkov-results.sarif || true
+        checkov -d ./terraform --output cli
         echo "Checkov scan completed (non-blocking)"
-        
-    - name: Upload Checkov results
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: checkov-results.sarif
-      continue-on-error: true
         
     - name: Deploy to EKS
       run: |
