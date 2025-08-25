@@ -9,7 +9,7 @@ metadata:
   name: 2048-game
   namespace: 2048-game
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: 2048-game
