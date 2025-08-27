@@ -69,29 +69,5 @@ resource "aws_iam_role_policy_attachment" "ec2_container_registry_read_only" {
   role       = aws_iam_role.eks_node_group.name
 }
 
-resource "aws_iam_policy" "route53_policy" {
-  name        = "eks-route53-policy"
-  description = "Policy for ExternalDNS to manage Route53 records"
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "route53:ChangeResourceRecordSets",
-          "route53:ListResourceRecordSets",
-          "route53:ListHostedZones",
-          "route53:GetChange"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "eks_route53_policy" {
-  policy_arn = aws_iam_policy.route53_policy.arn
-  role       = aws_iam_role.eks_node_group.name
-}
 
