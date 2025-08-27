@@ -97,12 +97,6 @@ jobs:
         
     - name: Deploy to EKS via ArgoCD
       run: |
-        echo "Deploying application to EKS cluster via ArgoCD..."
-        echo "ArgoCD is managing deployments - no manual kubectl apply needed"
-        echo "Deployment completed successfully!"
-        
-    - name: Verify deployment
-      run: |
-        echo "Verifying deployment status..."
-        echo "ArgoCD manages deployments - check ArgoCD UI for status"
-        echo "Deployment verification completed!"
+        echo "Security scans passed"
+        echo "ArgoCD will auto-deploy changes"
+
