@@ -49,6 +49,21 @@ resource "helm_release" "external_dns" {
   depends_on = [aws_eks_cluster.main]
 }
 
+resource "helm_release" "monitoring" {
+  name       = "monitoring"
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart      = "kube-prometheus-stack"
+  version    = "55.5.0"
+  namespace  = "monitoring"
+  create_namespace = true
+
+  values = [
+    file("${path.module}/helm-values/monitoring.yaml")
+  ]
+
+  depends_on = [aws_eks_cluster.main]
+}
+
 
 
 
