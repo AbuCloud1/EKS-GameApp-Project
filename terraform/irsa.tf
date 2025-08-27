@@ -20,6 +20,8 @@ resource "aws_iam_role" "external_dns" {
     ]
   })
 
+  depends_on = [aws_iam_openid_connect_provider.eks]
+
   tags = {
     Name      = "external-dns-irsa-role"
     Project   = "eks-project"
