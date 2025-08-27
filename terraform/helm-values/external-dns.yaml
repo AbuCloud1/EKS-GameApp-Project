@@ -11,6 +11,10 @@ aws:
   zoneCacheDuration: 0s
   sdServiceCleanup: false
 
+env:
+  - name: AWS_REGION
+    value: "eu-west-1"
+
 sources:
   - ingress
 
@@ -29,7 +33,8 @@ rbac:
   serviceAccount:
     create: true
     name: external-dns
-    annotations: {}
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::106801461504:role/eks-external-dns-role"
 
 resources:
   requests:
