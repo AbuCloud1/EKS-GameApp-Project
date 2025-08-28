@@ -16,6 +16,11 @@ terraform {
   }
 }
 
+# Data source for EKS cluster information
+data "aws_eks_cluster" "cluster" {
+  name = local.cluster_name
+}
+
 provider "aws" {
   region = local.aws_region
 }

@@ -23,9 +23,6 @@ resource "aws_eks_cluster" "main" {
   }
 }
 
-data "tls_certificate" "eks" {
-  url = aws_eks_cluster.main.identity[0].oidc[0].issuer
-}
 
 resource "aws_iam_openid_connect_provider" "eks" {
   client_id_list  = ["sts.amazonaws.com"]
@@ -124,4 +121,8 @@ resource "aws_security_group" "eks_nodes" {
     Project   = "eks-project"
     ManagedBy = "terraform"
   }
+}
+
+data "tls_certificate" "eks" {
+  url = aws_eks_cluster.main.identity[0].oidc[0].issuer
 }

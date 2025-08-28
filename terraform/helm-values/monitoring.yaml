@@ -10,7 +10,7 @@ prometheus:
               storage: 10Gi
 
 grafana:
-  adminPassword: ""  # Empty = auto-generate secure password
+  adminPassword: ""  
   adminUser: admin
   service:
     type: ClusterIP
