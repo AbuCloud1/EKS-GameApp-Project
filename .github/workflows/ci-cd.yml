@@ -1,9 +1,9 @@
 name: EKS CI/CD Pipeline with Security Scanning
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
 env:
   AWS_REGION: eu-west-1
