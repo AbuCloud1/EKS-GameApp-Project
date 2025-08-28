@@ -64,6 +64,27 @@ resource "helm_release" "monitoring" {
   depends_on = [aws_eks_cluster.main]
 }
 
+resource "helm_release" "argocd" {
+  name       = "argocd"
+  repository = "https://argoproj.github.io/argo-helm"
+  chart      = "argo-cd"
+  version    = "6.7.18"
+  namespace  = "argocd"
+  create_namespace = true
+
+  set {
+    name  = "server.ingress.enabled"
+    value = "false"
+  }
+
+  set {
+    name  = "server.extraArgs"
+    value = "{--insecure}"
+  }
+
+  depends_on = [aws_eks_cluster.main]
+}
+
 
 
 
