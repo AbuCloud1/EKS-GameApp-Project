@@ -4,7 +4,10 @@
 
 A jam-packed EKS cluster deployed on AWS using Terraform, with GitOps automation via ArgoCD, NGINX Ingress for traffic management, Cert-Manager for SSL, and ExternalDNS for dynamic DNS, monitoring via Prometheus & Grafana and a complete CI/CD pipeline with GitHub Actions.
 
+## DEMO - Code Walkthrough
 ![ScreenRecording2025-08-25at16 24 43-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/bb0751b0-e735-4201-8a4e-ee1c4930e9d7)
+
+**[Watch the Loom video here](https://www.loom.com/share/56a4a81691994e91b267194b8fff1e1c)**
 
 
 ## Architecture
